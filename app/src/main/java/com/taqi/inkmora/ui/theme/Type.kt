@@ -7,35 +7,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.taqi.inkmora.R
 
 // ── InkMora Typography ───────────────────────────────────────────
 // Display/Heading : Lora (serif) — the "traditional ink" voice
 // Body            : Inter (sans) — clean, readable, modern
-//
-// To use: add the font files to res/font/ and update the Font()
-// references below. Until then, FontFamily.Serif / Default are
-// used as stand-ins so the app compiles immediately.
-//
-// Recommended Google Fonts download:
-//   https://fonts.google.com/specimen/Lora
-//   https://fonts.google.com/specimen/Inter
 
-// Uncomment and wire up once font files are in res/font/
-// val LoraFontFamily = FontFamily(
-//     Font(R.font.lora_regular, FontWeight.Normal),
-//     Font(R.font.lora_medium,  FontWeight.Medium),
-//     Font(R.font.lora_bold,    FontWeight.Bold),
-//     Font(R.font.lora_italic,  FontWeight.Normal, FontStyle.Italic),
-// )
-// val InterFontFamily = FontFamily(
-//     Font(R.font.inter_regular,   FontWeight.Normal),
-//     Font(R.font.inter_medium,    FontWeight.Medium),
-//     Font(R.font.inter_semibold,  FontWeight.SemiBold),
-// )
+val LoraFontFamily = FontFamily(
+    Font(R.font.lora_regular, FontWeight.Normal),
+    Font(R.font.lora_medium, FontWeight.Medium),
+    Font(R.font.lora_bold, FontWeight.Bold),
+    Font(R.font.lora_italic, FontWeight.Normal, FontStyle.Italic),
+)
 
-// Stand-ins (swap with LoraFontFamily / InterFontFamily above)
-private val DisplayFont = FontFamily.Serif
-private val BodyFont = FontFamily.Default
+val InterFontFamily = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+)
+
+private val DisplayFont = LoraFontFamily
+private val BodyFont = InterFontFamily
 
 val InkMoraTypography = Typography(
 
