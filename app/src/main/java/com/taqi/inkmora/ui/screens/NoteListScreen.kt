@@ -172,39 +172,9 @@ private fun NoteListContent(
             modifier = Modifier.fillMaxSize()
         ) {
             items(notes, key = { it.id ?: it.hashCode() }) { note ->
-                val dismissState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { dismissValue ->
-                        if (dismissValue == SwipeToDismissBoxValue.EndToStart || dismissValue == SwipeToDismissBoxValue.StartToEnd) {
-                            onNoteDelete(note)
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                )
-
-                SwipeToDismissBox(
-                    state = dismissState,
-                    backgroundContent = {
-                        val color by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                SwipeToDismissBoxValue.Settled -> Color.Transparent
-                                else -> MaterialTheme.colorScheme.errorContainer
-                            }
-                        )
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .clip(MaterialTheme.shapes.large)
-                                .background(color)
-                        )
-                    },
-                    content = {
-                        NoteCard(
-                            note = note,
-                            onClick = { onNoteClick(note) }
-                        )
-                    }
+                NoteCard(
+                    note = note,
+                    onClick = { onNoteClick(note) }
                 )
             }
         }
