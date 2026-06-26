@@ -1,6 +1,6 @@
 <div align="center">
   <img 
-    src="https://raw.githubusercontent.com/taqi-m/InkMora/main/assets/banner.jpg" 
+    src="https://raw.githubusercontent.com/taqi-m/InkMora/refs/heads/master/assets/banner.jpg" 
     alt="InkMora - AI-Powered Notes with Dynamic Theming"
     width="100%"
     max-width="1200px"
