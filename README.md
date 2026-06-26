@@ -1,3 +1,13 @@
+<div align="center">
+  <img 
+    src="https://raw.githubusercontent.com/taqi-m/InkMora/main/assets/banner.jpg" 
+    alt="InkMora - AI-Powered Notes with Dynamic Theming"
+    width="100%"
+    max-width="1200px"
+    style="border-radius: 8px; margin-bottom: 24px;"
+  />
+</div>
+
 # 🖋️ InkMora
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
