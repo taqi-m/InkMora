@@ -15,5 +15,6 @@ enum class ThemeMode {
 
 data class ThemeSettings(
     val themeMode: ThemeMode = ThemeMode.FOLLOW_SYSTEM,
-    val mood: AppMood = AppMood.DEFAULT
+    val mood: AppMood = AppMood.DEFAULT,
+    val isOnboardingComplete: Boolean = false
 )
