@@ -37,7 +37,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable<Screen.Splash> {
                         SplashScreen {
-                            navController.navigate(Screen.Onboarding) {
+                            val nextScreen = if (themeSettings.isOnboardingComplete) Screen.NoteList else Screen.Onboarding
+                            navController.navigate(nextScreen) {
                                 popUpTo(Screen.Splash) { inclusive = true }
                             }
                         }
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
                             currentMood = themeSettings.mood,
                             onMoodSelected = mainViewModel::updateMood,
                             onOnboardingComplete = {
+                                mainViewModel.completeOnboarding()
                                 navController.navigate(Screen.NoteList) {
                                     popUpTo(Screen.Onboarding) { inclusive = true }
                                 }

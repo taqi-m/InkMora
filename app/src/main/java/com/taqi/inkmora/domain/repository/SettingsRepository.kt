@@ -25,4 +25,9 @@ interface SettingsRepository {
      * Updates the application's mood (dynamic palette).
      */
     suspend fun updateMood(mood: AppMood)
+
+    /**
+     * Persists whether the user has completed the onboarding flow.
+     */
+    suspend fun setOnboardingComplete(complete: Boolean)
 }

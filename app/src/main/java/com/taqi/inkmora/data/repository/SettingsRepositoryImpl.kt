@@ -29,4 +29,8 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun updateMood(mood: AppMood) {
         themeSettingsStore.updateMood(mood)
     }
+
+    override suspend fun setOnboardingComplete(complete: Boolean) {
+        themeSettingsStore.setOnboardingComplete(complete)
+    }
 }

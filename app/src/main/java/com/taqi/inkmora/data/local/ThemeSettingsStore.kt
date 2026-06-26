@@ -2,6 +2,7 @@ package com.taqi.inkmora.data.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -22,6 +23,7 @@ class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKeys {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val MOOD = stringPreferencesKey("mood")
+        val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
     }
 
     val themeSettings: Flow<ThemeSettings> = dataStore.data
@@ -47,7 +49,9 @@ class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
                 AppMood.DEFAULT
             }
 
-            ThemeSettings(themeMode, mood)
+            val isOnboardingComplete = preferences[PreferencesKeys.ONBOARDING_COMPLETE] ?: false
+
+            ThemeSettings(themeMode, mood, isOnboardingComplete)
         }
 
     suspend fun updateThemeMode(themeMode: ThemeMode) {
@@ -59,6 +63,12 @@ class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
     suspend fun updateMood(mood: AppMood) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.MOOD] = mood.name
+        }
+    }
+
+    suspend fun setOnboardingComplete(complete: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ONBOARDING_COMPLETE] = complete
         }
     }
 }

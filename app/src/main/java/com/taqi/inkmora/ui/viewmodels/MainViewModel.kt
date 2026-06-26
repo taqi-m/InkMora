@@ -36,4 +36,10 @@ class MainViewModel @Inject constructor(
             settingsRepository.updateMood(mood)
         }
     }
+
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            settingsRepository.setOnboardingComplete(true)
+        }
+    }
 }
