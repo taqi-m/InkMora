@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.R
 import com.taqi.inkmora.domain.model.Note
 import com.taqi.inkmora.ui.theme.*
+import com.taqi.inkmora.ui.utils.DateUtils
 
 /**
  * UI State for the Note List Screen
@@ -271,7 +272,7 @@ private fun NoteCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Oct 12, 2023", // Placeholder date
+                    text = DateUtils.formatTimestamp(note.timestamp),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
