@@ -2,10 +2,10 @@ package com.taqi.inkmora.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.taqi.inkmora.data.local.ThemeSettingsStore
 import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.domain.model.ThemeMode
 import com.taqi.inkmora.domain.model.ThemeSettings
+import com.taqi.inkmora.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,10 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val themeSettingsStore: ThemeSettingsStore
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    val themeSettings: StateFlow<ThemeSettings> = themeSettingsStore.themeSettings
+    val themeSettings: StateFlow<ThemeSettings> = settingsRepository.getThemeSettings()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -27,13 +27,13 @@ class MainViewModel @Inject constructor(
 
     fun updateThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
-            themeSettingsStore.updateThemeMode(themeMode)
+            settingsRepository.updateThemeMode(themeMode)
         }
     }
 
     fun updateMood(mood: AppMood) {
         viewModelScope.launch {
-            themeSettingsStore.updateMood(mood)
+            settingsRepository.updateMood(mood)
         }
     }
 }
