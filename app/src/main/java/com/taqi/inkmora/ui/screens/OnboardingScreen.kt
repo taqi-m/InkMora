@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -20,11 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.ui.theme.*
+import com.taqi.inkmora.R
 
 @Composable
 fun OnboardingScreen(
     currentMood: AppMood = AppMood.DEFAULT,
     onMoodSelected: (AppMood) -> Unit = {},
+    onGoogleSignIn: () -> Unit = {},
+    isSigningIn: Boolean = false,
     onOnboardingComplete: () -> Unit
 ) {
     val animatedPosterBgColor by animateColorAsState(targetValue = MaterialTheme.colorScheme.background, label = "posterMoodBgColor")
@@ -41,6 +45,8 @@ fun OnboardingScreen(
             OnboardingPosterContent(
                 currentMood = currentMood,
                 onMoodSelected = onMoodSelected,
+                onGoogleSignIn = onGoogleSignIn,
+                isSigningIn = isSigningIn,
                 animatedTextColor = animatedTextColor,
                 onOnboardingComplete = onOnboardingComplete
             )
@@ -52,6 +58,8 @@ fun OnboardingScreen(
 private fun OnboardingPosterContent(
     currentMood: AppMood,
     onMoodSelected: (AppMood) -> Unit,
+    onGoogleSignIn: () -> Unit,
+    isSigningIn: Boolean,
     animatedTextColor: Color,
     onOnboardingComplete: () -> Unit
 ) {
@@ -166,8 +174,38 @@ private fun OnboardingPosterContent(
         // Bottom Section: Primary Action
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            OutlinedButton(
+                onClick = onGoogleSignIn,
+                enabled = !isSigningIn,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = CircleShape,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+            ) {
+                if (isSigningIn) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Continue with Google",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            }
+
             Button(
                 onClick = onOnboardingComplete,
                 modifier = Modifier

@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
     implementation(libs.googleid)
+    implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.lottie.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

@@ -1,0 +1,28 @@
+package com.taqi.inkmora.di
+
+import com.google.firebase.auth.FirebaseAuth
+import com.taqi.inkmora.data.repository.FirebaseAuthRepositoryImpl
+import com.taqi.inkmora.domain.repository.AuthRepository
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class AuthModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        firebaseAuthRepositoryImpl: FirebaseAuthRepositoryImpl
+    ): AuthRepository
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    }
+}

@@ -17,4 +17,7 @@ sealed class Screen {
 
     @Serializable
     data object Onboarding : Screen()
+
+    @Serializable
+    data object Profile : Screen()
 }
