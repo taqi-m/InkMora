@@ -46,6 +46,7 @@ fun NoteListScreen(
     state: NoteListUiState,
     onCreateNote: () -> Unit,
     onEditNote: (Int) -> Unit,
+    onProfileClick: () -> Unit,
     onDeleteNote: (Note) -> Unit = {},
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
@@ -56,7 +57,7 @@ fun NoteListScreen(
     }
 
     Scaffold(
-        topBar = { NoteListTopBar() },
+        topBar = { NoteListTopBar(onProfileClick = onProfileClick) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onCreateNote,
@@ -106,7 +107,7 @@ fun NoteListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NoteListTopBar() {
+private fun NoteListTopBar(onProfileClick: () -> Unit) {
 // ...
 // (Omitted unchanged TopBar)
     CenterAlignedTopAppBar(
@@ -148,7 +149,7 @@ private fun NoteListTopBar() {
             }
         },
         actions = {
-            IconButton(onClick = { /* Open Profile */ }) {
+            IconButton(onClick = onProfileClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_account_circle),
                     contentDescription = "Profile"
@@ -459,6 +460,7 @@ fun NoteListScreenPreview() {
             state = NoteListUiState.Success(dummyNotes),
             onCreateNote = {},
             onEditNote = {},
+            onProfileClick = {},
             onRetry = {}
         )
     }
@@ -472,6 +474,7 @@ fun NoteListScreenEmptyPreview() {
             state = NoteListUiState.Empty,
             onCreateNote = {},
             onEditNote = {},
+            onProfileClick = {},
             onRetry = {}
         )
     }
@@ -485,6 +488,7 @@ fun NoteListScreenLoadingPreview() {
             state = NoteListUiState.Loading,
             onCreateNote = {},
             onEditNote = {},
+            onProfileClick = {},
             onRetry = {}
         )
     }

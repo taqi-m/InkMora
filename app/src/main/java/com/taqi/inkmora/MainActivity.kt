@@ -10,9 +10,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.toRoute
+import com.taqi.inkmora.domain.model.AuthUser
 import com.taqi.inkmora.ui.screens.*
 import com.taqi.inkmora.ui.theme.InkMoraTheme
+import com.taqi.inkmora.ui.viewmodels.AuthViewModel
 import com.taqi.inkmora.ui.viewmodels.MainViewModel
 import com.taqi.inkmora.ui.viewmodels.NoteEditorViewModel
 import com.taqi.inkmora.ui.viewmodels.NoteListViewModel
@@ -26,7 +30,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val mainViewModel: MainViewModel = hiltViewModel()
+            val authViewModel: AuthViewModel = hiltViewModel()
+            
             val themeSettings by mainViewModel.themeSettings.collectAsStateWithLifecycle()
+            val authUser by authViewModel.user.collectAsStateWithLifecycle()
 
             InkMoraTheme(themeSettings = themeSettings) {
                 val navController = rememberNavController()
@@ -44,9 +51,13 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable<Screen.Onboarding> {
+                        val authIsSigningIn by authViewModel.isSigningIn.collectAsStateWithLifecycle()
+                        
                         OnboardingScreen(
                             currentMood = themeSettings.mood,
                             onMoodSelected = mainViewModel::updateMood,
+                            onGoogleSignIn = { context -> authViewModel.signInWithGoogle(context) },
+                            isSigningIn = authIsSigningIn,
                             onOnboardingComplete = {
                                 mainViewModel.completeOnboarding()
                                 navController.navigate(Screen.NoteList) {
@@ -68,7 +79,16 @@ class MainActivity : ComponentActivity() {
                             onEditNote = { id ->
                                 navController.navigate(Screen.NoteEditor(id))
                             },
+                            onProfileClick = {
+                                navController.navigate(Screen.Profile)
+                            },
                             onRetry = { viewModel.retry() }
+                        )
+                    }
+                    composable<Screen.Profile> {
+                        ProfileScreen(
+                            viewModel = authViewModel,
+                            onBack = { navController.popBackStack() }
                         )
                     }
                     composable<Screen.NoteEditor> { backStackEntry ->
