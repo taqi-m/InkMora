@@ -37,3 +37,42 @@ val TextPrimaryDark = Color(0xFFF0F0F8)  // primary text on dark bg
 val TextSecondaryDark = Color(0xFFB0AECA)  // secondary/hint on dark
 val TextPrimaryLight = Color(0xFF1A1A2E) // primary text on light bg
 val TextSecondaryLight = Color(0xFF6B6880) // secondary/hint on light
+
+// Mood Colors
+val MoodCalm = Color(0xFFD0E7FF)
+val MoodEnergetic = Color(0xFFFFE0B2)
+val MoodMelancholic = Color(0xFFE1BEE7)
+
+// ── Calm Mood Scheme Colors ─────────────────────────────────────
+val CalmPrimaryLight = Color(0xFF1E88E5)
+val CalmPrimaryContainerLight = Color(0xFFE3F2FD)
+val CalmBackgroundLight = Color(0xFFF2F5FA)
+val CalmSurfaceLight = Color(0xFFF2F5FA)
+
+val CalmPrimaryDark = Color(0xFF90CAF9)
+val CalmPrimaryContainerDark = Color(0xFF0D47A1)
+val CalmBackgroundDark = Color(0xFF151922)
+val CalmSurfaceDark = Color(0xFF1C2230)
+
+// ── Energetic Mood Scheme Colors ────────────────────────────────
+val EnergeticPrimaryLight = Color(0xFFF57C00)
+val EnergeticPrimaryContainerLight = Color(0xFFFFE0B2)
+val EnergeticBackgroundLight = Color(0xFFFFFDF6)
+val EnergeticSurfaceLight = Color(0xFFFFFDF6)
+
+val EnergeticPrimaryDark = Color(0xFFFFB74D)
+val EnergeticPrimaryContainerDark = Color(0xFFE65100)
+val EnergeticBackgroundDark = Color(0xFF1E1B15)
+val EnergeticSurfaceDark = Color(0xFF28241C)
+
+// ── Melancholic Mood Scheme Colors ──────────────────────────────
+val MelancholicPrimaryLight = Color(0xFF8E24AA)
+val MelancholicPrimaryContainerLight = Color(0xFFF3E5F5)
+val MelancholicBackgroundLight = Color(0xFFFAF6FC)
+val MelancholicSurfaceLight = Color(0xFFFAF6FC)
+
+val MelancholicPrimaryDark = Color(0xFFE1BEE7)
+val MelancholicPrimaryContainerDark = Color(0xFF4A148C)
+val MelancholicBackgroundDark = Color(0xFF19151C)
+val MelancholicSurfaceDark = Color(0xFF231D29)
+

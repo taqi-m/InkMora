@@ -39,6 +39,21 @@ val InkMoraTypography = Typography(
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
     ),
+    // Additional display variants (medium / small) for scaled headings
+    displayMedium = TextStyle(
+        fontFamily = DisplayFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 45.sp,
+        lineHeight = 52.sp,
+        letterSpacing = 0.sp,
+    ),
+    displaySmall = TextStyle(
+        fontFamily = DisplayFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 36.sp,
+        lineHeight = 44.sp,
+        letterSpacing = 0.sp,
+    ),
 
     // ── Headlines — note titles, section headers ──────────────────
     headlineLarge = TextStyle(

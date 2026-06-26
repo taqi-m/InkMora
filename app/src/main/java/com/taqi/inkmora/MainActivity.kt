@@ -11,12 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.taqi.inkmora.ui.screens.NoteEditorScreen
-import com.taqi.inkmora.ui.screens.NoteListScreen
-import com.taqi.inkmora.ui.screens.Screen
-import com.taqi.inkmora.ui.screens.SplashScreen
-import com.taqi.inkmora.ui.screens.ThemePromptSheet
+import com.taqi.inkmora.ui.screens.*
 import com.taqi.inkmora.ui.theme.InkMoraTheme
+import com.taqi.inkmora.ui.viewmodels.MainViewModel
 import com.taqi.inkmora.ui.viewmodels.NoteEditorViewModel
 import com.taqi.inkmora.ui.viewmodels.NoteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +25,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            InkMoraTheme {
+            val mainViewModel: MainViewModel = hiltViewModel()
+            val themeSettings by mainViewModel.themeSettings.collectAsStateWithLifecycle()
+
+            InkMoraTheme(themeSettings = themeSettings) {
                 val navController = rememberNavController()
 
                 NavHost(
@@ -37,10 +37,22 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable<Screen.Splash> {
                         SplashScreen {
-                            navController.navigate(Screen.NoteList) {
+                            navController.navigate(Screen.Onboarding) {
                                 popUpTo(Screen.Splash) { inclusive = true }
                             }
                         }
+                    }
+                    composable<Screen.Onboarding> {
+                        OnboardingScreen(
+                            currentMood = themeSettings.mood,
+                            onMoodSelected = mainViewModel::updateMood,
+                            onOnboardingComplete = {
+                                navController.navigate(Screen.NoteList) {
+                                    popUpTo(Screen.Onboarding) { inclusive = true }
+                                }
+                                navController.navigate(Screen.NoteEditor())
+                            }
+                        )
                     }
                     composable<Screen.NoteList> {
                         val viewModel: NoteListViewModel = hiltViewModel()
@@ -97,6 +109,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<Screen.ThemePrompt> {
                         ThemePromptSheet(
+                            currentMood = themeSettings.mood,
+                            onMoodSelect = mainViewModel::updateMood,
                             onApply = {
                                 navController.popBackStack()
                             }

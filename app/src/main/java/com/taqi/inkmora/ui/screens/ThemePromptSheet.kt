@@ -6,24 +6,85 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.taqi.inkmora.domain.model.AppMood
+import java.util.*
 
 @Composable
 fun ThemePromptSheet(
+    currentMood: AppMood,
+    onMoodSelect: (AppMood) -> Unit,
     onApply: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Theme Prompt (The Whisper)", style = MaterialTheme.typography.headlineMedium)
+        Column(
+            modifier = Modifier
+                .padding(24.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "Theme Prompt (The Whisper)",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Text(
+                "Choose your vibe:",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onApply) {
-                Text("Apply")
+            
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                maxItemsInEachRow = 2
+            ) {
+                AppMood.entries.forEach { mood ->
+                    MoodChip(
+                        mood = mood,
+                        isSelected = mood == currentMood,
+                        onClick = { onMoodSelect(mood) }
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            Button(
+                onClick = onApply,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Confirm Vibe")
             }
         }
     }
+}
+
+@Composable
+fun MoodChip(
+    mood: AppMood,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = { 
+            Text(mood.name.lowercase(Locale.ROOT).replaceFirstChar { 
+                if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() 
+            }) 
+        },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+        )
+    )
 }

@@ -5,8 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,14 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.R
 import com.taqi.inkmora.ui.theme.AuraPurple
 import com.taqi.inkmora.ui.theme.InkMoraTheme
+import com.taqi.inkmora.ui.theme.InterFontFamily
 import com.taqi.inkmora.ui.viewmodels.NoteEditorUiState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun NoteEditorScreen(
@@ -38,6 +46,8 @@ fun NoteEditorScreen(
 ) {
     // Simulate AI Active state for the visual glow
     val isAiActive = false
+
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -55,6 +65,7 @@ fun NoteEditorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .imePadding() // Move keyboard awareness to the container
         ) {
             // Optional: Background Mood Gradient Wash would go here
             if (isAiActive) {
@@ -64,14 +75,16 @@ fun NoteEditorScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(scrollState) // Enable vertical scrolling for the whole page
                     .padding(horizontal = 24.dp)
-                    .padding(top = 16.dp, bottom = 80.dp) // Leave room for Mood Pill
+                    .padding(top = 16.dp)
             ) {
                 // Title Field
+                val titleStyle = MaterialTheme.typography.displayMedium
                 BasicTextField(
                     value = state.title,
                     onValueChange = onTitleChange,
-                    textStyle = MaterialTheme.typography.displayLarge.copy(
+                    textStyle = titleStyle.copy(
                         color = MaterialTheme.colorScheme.onBackground
                     ),
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
@@ -80,7 +93,7 @@ fun NoteEditorScreen(
                             if (state.title.isEmpty()) {
                                 Text(
                                     text = "Untitled Note",
-                                    style = MaterialTheme.typography.displayLarge,
+                                    style = titleStyle,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                                 )
                             }
@@ -92,37 +105,79 @@ fun NoteEditorScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                // Timestamp Metadata Line (F3)
+                val dateFormat = remember { SimpleDateFormat("EEEE, d MMM · h:mm a", Locale.getDefault()) }
+                val dateString = remember(state.timestamp) { dateFormat.format(Date(state.timestamp)) }
+                
+                Row(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = dateString,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = InterFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
+                    
+                    if (state.content.isNotEmpty()) {
+                        val wordCount = remember(state.content) { state.content.split(Regex("\\s+")).filter { it.isNotBlank() }.size }
+                        val readTime = remember(wordCount) { (wordCount / 200).coerceAtLeast(1) }
+                        
+                        Text(
+                            text = " · $wordCount words · ~$readTime min read",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = InterFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        )
+                    }
+                }
+
+                val contentTextStyle = MaterialTheme.typography.bodyLarge
                 // Content Field
                 BasicTextField(
                     value = state.content,
                     onValueChange = onContentChange,
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textStyle = contentTextStyle.copy(
                         color = MaterialTheme.colorScheme.onBackground
                     ),
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     decorationBox = { innerTextField ->
-                        Box(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
                             if (state.content.isEmpty()) {
                                 Text(
                                     text = "Start writing...",
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    style = contentTextStyle,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                                 )
                             }
                             innerTextField()
                         }
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxWidth() // Don't use fillMaxSize in scrollable Column
                 )
+                
+                // Safety buffer to ensure text can be scrolled above the floating Pill
+                Spacer(modifier = Modifier.height(160.dp))
             }
 
-            // The Signature Element: AI Mood Pill
-            AiMoodPill(
+            // The Signature Element: AI Mood Pill (F4 - Keyboard Aware)
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp),
-                onClick = onOpenThemePrompt
-            )
+                    .padding(bottom = 32.dp), // Removed imePadding as it's now on the parent Box
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AiMoodPill(
+                    onClick = onOpenThemePrompt
+                )
+            }
         }
     }
 }
@@ -274,7 +329,11 @@ private fun AiMoodPill(
 fun NoteEditorScreenPreview() {
     InkMoraTheme {
         NoteEditorScreen(
-            state = NoteEditorUiState(),
+            state = NoteEditorUiState(
+                title = "Reflections on the Ink",
+                content = "The way the digital nib moves across the screen is reminiscent of traditional calligraphy, yet it carries a weightless potential that only the virtual world can offer.",
+                timestamp = System.currentTimeMillis()
+            ),
             onTitleChange = {},
             onContentChange = {},
             onSaveNote = {},

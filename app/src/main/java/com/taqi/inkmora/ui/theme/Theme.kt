@@ -14,6 +14,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.taqi.inkmora.domain.model.AppMood
+import com.taqi.inkmora.domain.model.ThemeMode
+import com.taqi.inkmora.domain.model.ThemeSettings
 
 // ── Dark Scheme ─────────────────────────────────────────────────
 // Deep ink surfaces, aura purple as the living accent
@@ -73,9 +76,179 @@ private val LightColorScheme = lightColorScheme(
     onError = Parchment50,
 )
 
+// ── Calm Mood Schemes ──────────────────────────────────────────
+val CalmLightColorScheme = lightColorScheme(
+    primary = CalmPrimaryLight,
+    onPrimary = Parchment50,
+    primaryContainer = CalmPrimaryContainerLight,
+    onPrimaryContainer = CalmPrimaryLight,
+
+    secondary = InkStroke,
+    onSecondary = Parchment50,
+    secondaryContainer = Parchment200,
+    onSecondaryContainer = TextSecondaryLight,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = CalmBackgroundLight,
+    onBackground = TextPrimaryLight,
+
+    surface = CalmSurfaceLight,
+    onSurface = TextPrimaryLight,
+    surfaceVariant = Parchment100,
+    onSurfaceVariant = TextSecondaryLight,
+
+    outline = Parchment200,
+    error = ErrorRose,
+    onError = Parchment50,
+)
+
+val CalmDarkColorScheme = darkColorScheme(
+    primary = CalmPrimaryDark,
+    onPrimary = Ink900,
+    primaryContainer = CalmPrimaryContainerDark,
+    onPrimaryContainer = CalmPrimaryDark,
+
+    secondary = InkStroke80,
+    onSecondary = Ink900,
+    secondaryContainer = Ink600,
+    onSecondaryContainer = TextSecondaryDark,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = CalmBackgroundDark,
+    onBackground = TextPrimaryDark,
+
+    surface = CalmSurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = Ink600,
+    onSurfaceVariant = TextSecondaryDark,
+
+    outline = InkStroke,
+    error = ErrorRose,
+    onError = Ink900,
+)
+
+// ── Energetic Mood Schemes ───────────────────────────────────────
+val EnergeticLightColorScheme = lightColorScheme(
+    primary = EnergeticPrimaryLight,
+    onPrimary = Parchment50,
+    primaryContainer = EnergeticPrimaryContainerLight,
+    onPrimaryContainer = EnergeticPrimaryLight,
+
+    secondary = InkStroke,
+    onSecondary = Parchment50,
+    secondaryContainer = Parchment200,
+    onSecondaryContainer = TextSecondaryLight,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = EnergeticBackgroundLight,
+    onBackground = TextPrimaryLight,
+
+    surface = EnergeticSurfaceLight,
+    onSurface = TextPrimaryLight,
+    surfaceVariant = Parchment100,
+    onSurfaceVariant = TextSecondaryLight,
+
+    outline = Parchment200,
+    error = ErrorRose,
+    onError = Parchment50,
+)
+
+val EnergeticDarkColorScheme = darkColorScheme(
+    primary = EnergeticPrimaryDark,
+    onPrimary = Ink900,
+    primaryContainer = EnergeticPrimaryContainerDark,
+    onPrimaryContainer = EnergeticPrimaryDark,
+
+    secondary = InkStroke80,
+    onSecondary = Ink900,
+    secondaryContainer = Ink600,
+    onSecondaryContainer = TextSecondaryDark,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = EnergeticBackgroundDark,
+    onBackground = TextPrimaryDark,
+
+    surface = EnergeticSurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = Ink600,
+    onSurfaceVariant = TextSecondaryDark,
+
+    outline = InkStroke,
+    error = ErrorRose,
+    onError = Ink900,
+)
+
+// ── Melancholic Mood Schemes ─────────────────────────────────────
+val MelancholicLightColorScheme = lightColorScheme(
+    primary = MelancholicPrimaryLight,
+    onPrimary = Parchment50,
+    primaryContainer = MelancholicPrimaryContainerLight,
+    onPrimaryContainer = MelancholicPrimaryLight,
+
+    secondary = InkStroke,
+    onSecondary = Parchment50,
+    secondaryContainer = Parchment200,
+    onSecondaryContainer = TextSecondaryLight,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = MelancholicBackgroundLight,
+    onBackground = TextPrimaryLight,
+
+    surface = MelancholicSurfaceLight,
+    onSurface = TextPrimaryLight,
+    surfaceVariant = Parchment100,
+    onSurfaceVariant = TextSecondaryLight,
+
+    outline = Parchment200,
+    error = ErrorRose,
+    onError = Parchment50,
+)
+
+val MelancholicDarkColorScheme = darkColorScheme(
+    primary = MelancholicPrimaryDark,
+    onPrimary = Ink900,
+    primaryContainer = MelancholicPrimaryContainerDark,
+    onPrimaryContainer = MelancholicPrimaryDark,
+
+    secondary = InkStroke80,
+    onSecondary = Ink900,
+    secondaryContainer = Ink600,
+    onSecondaryContainer = TextSecondaryDark,
+
+    tertiary = SuccessGreen,
+    onTertiary = Ink900,
+
+    background = MelancholicBackgroundDark,
+    onBackground = TextPrimaryDark,
+
+    surface = MelancholicSurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = Ink600,
+    onSurfaceVariant = TextSecondaryDark,
+
+    outline = InkStroke,
+    error = ErrorRose,
+    onError = Ink900,
+)
+
 @Composable
 fun InkMoraTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeSettings: ThemeSettings = ThemeSettings(),
+    darkTheme: Boolean = when (themeSettings.themeMode) {
+        ThemeMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    },
     // Dynamic color disabled intentionally — InkMora's identity is its
     // own palette. Dynamic color would override that on Android 12+.
     dynamicColor: Boolean = false,
@@ -87,18 +260,26 @@ fun InkMoraTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> when (themeSettings.mood) {
+            AppMood.DEFAULT -> if (darkTheme) DarkColorScheme else LightColorScheme
+            AppMood.CALM -> if (darkTheme) CalmDarkColorScheme else CalmLightColorScheme
+            AppMood.ENERGETIC -> if (darkTheme) EnergeticDarkColorScheme else EnergeticLightColorScheme
+            AppMood.MELANCHOLIC -> if (darkTheme) MelancholicDarkColorScheme else MelancholicLightColorScheme
+        }
     }
 
-    // Edge-to-edge: status bar matches the app background
+    // Edge-to-edge: system bars match the app background
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            
             window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view)
-                .isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            
+            window.navigationBarColor = colorScheme.background.toArgb()
+            insetsController.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

@@ -141,3 +141,8 @@ fabric.properties
 # Root markdown files
 /*.md
 !/README.md
+
+
+/.claude/
+/.agents/
+/graphify-out/
