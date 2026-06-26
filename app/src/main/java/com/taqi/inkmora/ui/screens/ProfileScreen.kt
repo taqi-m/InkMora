@@ -39,6 +39,7 @@ fun ProfileScreen(
     val user by viewModel.user.collectAsState()
     val isSigningIn by viewModel.isSigningIn.collectAsState()
     val error by viewModel.error.collectAsState()
+    val context = LocalContext.current
 
     ProfileContent(
         user = user,
@@ -46,7 +47,7 @@ fun ProfileScreen(
         error = error,
         onBack = onBack,
         onSignOut = { viewModel.signOut() },
-        onSignIn = { viewModel.signInWithGoogle() }
+        onSignIn = { viewModel.signInWithGoogle(context) }
     )
 }
 

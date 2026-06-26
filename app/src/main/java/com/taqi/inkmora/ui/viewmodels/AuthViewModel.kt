@@ -1,5 +1,6 @@
 package com.taqi.inkmora.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taqi.inkmora.domain.model.AuthUser
@@ -39,13 +40,14 @@ class AuthViewModel @Inject constructor(
 
     /**
      * Triggers the Google Sign-In flow.
+     * @param context The [Context] used to launch the credential selector.
      */
-    fun signInWithGoogle() {
+    fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
             _isSigningIn.value = true
             _error.value = null
             
-            val result = authRepository.signInWithGoogle()
+            val result = authRepository.signInWithGoogle(context)
             if (result.isFailure) {
                 _error.value = result.exceptionOrNull()?.message ?: "Sign-in failed"
             }

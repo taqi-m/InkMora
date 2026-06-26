@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.toRoute
 import com.taqi.inkmora.domain.model.AuthUser
 import com.taqi.inkmora.ui.screens.*
@@ -55,7 +56,7 @@ class MainActivity : ComponentActivity() {
                         OnboardingScreen(
                             currentMood = themeSettings.mood,
                             onMoodSelected = mainViewModel::updateMood,
-                            onGoogleSignIn = { authViewModel.signInWithGoogle() },
+                            onGoogleSignIn = { context -> authViewModel.signInWithGoogle(context) },
                             isSigningIn = authIsSigningIn,
                             onOnboardingComplete = {
                                 mainViewModel.completeOnboarding()

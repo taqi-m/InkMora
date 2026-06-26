@@ -1,5 +1,6 @@
 package com.taqi.inkmora.ui.screens
 
+import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -27,12 +28,13 @@ import com.taqi.inkmora.R
 fun OnboardingScreen(
     currentMood: AppMood = AppMood.DEFAULT,
     onMoodSelected: (AppMood) -> Unit = {},
-    onGoogleSignIn: () -> Unit = {},
+    onGoogleSignIn: (Context) -> Unit = {},
     isSigningIn: Boolean = false,
     onOnboardingComplete: () -> Unit
 ) {
     val animatedPosterBgColor by animateColorAsState(targetValue = MaterialTheme.colorScheme.background, label = "posterMoodBgColor")
     val animatedTextColor by animateColorAsState(targetValue = MaterialTheme.colorScheme.primary, label = "posterTextColor")
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         containerColor = animatedPosterBgColor
@@ -45,7 +47,7 @@ fun OnboardingScreen(
             OnboardingPosterContent(
                 currentMood = currentMood,
                 onMoodSelected = onMoodSelected,
-                onGoogleSignIn = onGoogleSignIn,
+                onGoogleSignIn = { onGoogleSignIn(context) },
                 isSigningIn = isSigningIn,
                 animatedTextColor = animatedTextColor,
                 onOnboardingComplete = onOnboardingComplete

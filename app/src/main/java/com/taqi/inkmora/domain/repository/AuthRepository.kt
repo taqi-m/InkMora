@@ -1,5 +1,6 @@
 package com.taqi.inkmora.domain.repository
 
+import android.content.Context
 import com.taqi.inkmora.domain.model.AuthUser
 import kotlinx.coroutines.flow.Flow
 
@@ -17,9 +18,10 @@ interface AuthRepository {
 
     /**
      * Signs in using Google. The implementation handles token retrieval and Firebase exchange.
+     * @param context The [Context] (should be an Activity context) to launch the credential selector.
      * @return A [Result] containing the [AuthUser] on success.
      */
-    suspend fun signInWithGoogle(): Result<AuthUser>
+    suspend fun signInWithGoogle(context: Context): Result<AuthUser>
 
     /**
      * Signs out the current user.

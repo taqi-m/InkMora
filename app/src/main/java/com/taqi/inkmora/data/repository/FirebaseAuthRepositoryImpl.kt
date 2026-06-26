@@ -7,7 +7,6 @@ import com.taqi.inkmora.R
 import com.taqi.inkmora.data.remote.GoogleAuthClient
 import com.taqi.inkmora.domain.model.AuthUser
 import com.taqi.inkmora.domain.repository.AuthRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -22,8 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class FirebaseAuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val googleAuthClient: GoogleAuthClient,
-    @ApplicationContext private val context: Context
+    private val googleAuthClient: GoogleAuthClient
 ) : AuthRepository {
 
     override val currentUser: Flow<AuthUser?> = callbackFlow {
@@ -37,10 +35,10 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         }
     }.distinctUntilChanged()
 
-    override suspend fun signInWithGoogle(): Result<AuthUser> {
+    override suspend fun signInWithGoogle(context: Context): Result<AuthUser> {
         return try {
             val webClientId = context.getString(R.string.default_web_client_id)
-            val idTokenResult = googleAuthClient.getGoogleIdToken(webClientId)
+            val idTokenResult = googleAuthClient.getGoogleIdToken(context, webClientId)
             
             val idToken = idTokenResult.getOrElse { return Result.failure(it) }
 
