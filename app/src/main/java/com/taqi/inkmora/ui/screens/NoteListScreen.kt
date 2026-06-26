@@ -4,10 +4,13 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,10 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.R
 import com.taqi.inkmora.domain.model.Note
-import com.taqi.inkmora.ui.theme.AuraPurple
-import com.taqi.inkmora.ui.theme.Ink800
-import com.taqi.inkmora.ui.theme.InkMoraTheme
-import com.taqi.inkmora.ui.theme.Parchment50
+import com.taqi.inkmora.ui.theme.*
 
 /**
  * UI State for the Note List Screen
@@ -49,22 +49,35 @@ fun NoteListScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyStaggeredGridState()
+    val isFabExpanded by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
+
     Scaffold(
         topBar = { NoteListTopBar() },
         floatingActionButton = {
-            FloatingActionButton(
+            ExtendedFloatingActionButton(
                 onClick = onCreateNote,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = CircleShape,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_nib),
-                    contentDescription = "Create Note",
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+                expanded = isFabExpanded,
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nib),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                text = {
+                    Text(
+                        text = "Uncap Ink",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            )
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -81,7 +94,8 @@ fun NoteListScreen(
                     NoteListContent(
                         notes = state.notes,
                         onNoteClick = { onEditNote(it.id ?: 0) },
-                        onNoteDelete = onDeleteNote
+                        onNoteDelete = onDeleteNote,
+                        listState = listState
                     )
                 }
             }
@@ -151,21 +165,40 @@ private fun NoteListTopBar() {
 private fun NoteListContent(
     notes: List<Note>,
     onNoteClick: (Note) -> Unit,
-    onNoteDelete: (Note) -> Unit = {}
+    onNoteDelete: (Note) -> Unit = {},
+    listState: LazyStaggeredGridState
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = "My Notes",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column {
+                Text(
+                    text = "My Notes",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.5).sp
+                    )
+                )
+                Text(
+                    text = "${notes.size} thoughts captured",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
+        }
 
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Adaptive(250.dp),
+            state = listState,
             contentPadding = PaddingValues(bottom = 80.dp),
             verticalItemSpacing = 16.dp,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -187,13 +220,10 @@ private fun NoteCard(
     note: Note,
     onClick: () -> Unit
 ) {
-    // Random Mood Tint Placeholder
-    val moodTint = remember { getRandomMoodTint() }
-
     Surface(
         onClick = onClick,
-        shape = MaterialTheme.shapes.large,
-        color = moodTint,
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -394,19 +424,6 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
             Text("Wipe and Retry")
         }
     }
-}
-
-/**
- * Temporary utility for random mood tints
- */
-private fun getRandomMoodTint(): Color {
-    val tints = listOf(
-        Color(0xFFC6C4DF).copy(alpha = 0.2f), // Calm
-        Color(0xFFB9AA83).copy(alpha = 0.15f), // Energetic
-        Color(0xFF5D5C74).copy(alpha = 0.1f),  // Melancholic
-        Color(0xFFC084FC).copy(alpha = 0.1f)   // Aura
-    )
-    return tints.random()
 }
 
 @Preview(showBackground = true)

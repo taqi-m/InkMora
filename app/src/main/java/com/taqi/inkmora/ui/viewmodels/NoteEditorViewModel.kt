@@ -19,6 +19,7 @@ data class NoteEditorUiState(
     val title: String = "",
     val content: String = "",
     val noteId: Int? = null,
+    val timestamp: Long = System.currentTimeMillis(),
     val isLoading: Boolean = false,
     val color: Int = 0xFFF5F5F7.toInt() // Default background color
 )
@@ -55,6 +56,7 @@ class NoteEditorViewModel @Inject constructor(
                         title = note.title,
                         content = note.content,
                         noteId = note.id,
+                        timestamp = note.timestamp,
                         color = note.color,
                         isLoading = false
                     )

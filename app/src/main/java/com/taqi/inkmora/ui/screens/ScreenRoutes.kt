@@ -14,4 +14,7 @@ sealed class Screen {
 
     @Serializable
     data object ThemePrompt : Screen()
+
+    @Serializable
+    data object Onboarding : Screen()
 }
