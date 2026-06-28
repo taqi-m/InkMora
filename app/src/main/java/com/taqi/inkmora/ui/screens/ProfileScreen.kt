@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.taqi.inkmora.R
 import com.taqi.inkmora.domain.model.AuthUser
+import com.taqi.inkmora.ui.components.GoogleSignInButton
 import com.taqi.inkmora.ui.theme.InkMoraTheme
 import com.taqi.inkmora.ui.viewmodels.AuthViewModel
 
@@ -197,30 +198,12 @@ private fun GuestProfile(
 
     Spacer(modifier = Modifier.height(32.dp))
 
-    Button(
+    GoogleSignInButton(
         onClick = onSignInClick,
-        enabled = !isSigningIn,
-        modifier = Modifier.fillMaxWidth(),
-        shape = CircleShape
-    ) {
-        if (isSigningIn) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
-                color = MaterialTheme.colorScheme.onPrimary,
-                strokeWidth = 2.dp
-            )
-        } else {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search), // Using search as placeholder for google G
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Sign in with Google")
-            }
-        }
-    }
+        modifier = Modifier.fillMaxWidth().height(56.dp),
+        loading = isSigningIn,
+        text = "Sign in with Google"
+    )
 }
 
 @Preview(showBackground = true)
