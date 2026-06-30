@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
@@ -34,6 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteEditorScreen(
     state: NoteEditorUiState,
@@ -49,23 +53,33 @@ fun NoteEditorScreen(
 
     val scrollState = rememberScrollState()
 
+    // Focus requester variables to handle tapping empty space
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+
     Scaffold(
         topBar = {
             NoteEditorTopBar(
-                onBack = onBack, 
+                onBack = onBack,
                 onSave = onSaveNote,
                 onDelete = onDeleteNote,
                 showDelete = state.noteId != null // Only show delete if editing existing note
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0) // Edge-to-edge feel
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .imePadding() // Move keyboard awareness to the container
+                .consumeWindowInsets(paddingValues)
+                // Make the entire Box clickable to focus the text field
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null // Removes the ripple effect
+                ) {
+                    focusRequester.requestFocus()
+                }
         ) {
             // Optional: Background Mood Gradient Wash would go here
             if (isAiActive) {
@@ -75,12 +89,14 @@ fun NoteEditorScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState) // Enable vertical scrolling for the whole page
-                    .padding(horizontal = 24.dp)
+                    .imePadding() // Ensures scroll bounds adjust when keyboard opens
+                    .imeNestedScroll()
+                    .verticalScroll(scrollState) // Re-enabled vertical scrolling
+                    .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
             ) {
                 // Title Field
-                val titleStyle = MaterialTheme.typography.displayMedium
+                val titleStyle = MaterialTheme.typography.headlineLarge
                 BasicTextField(
                     value = state.title,
                     onValueChange = onTitleChange,
@@ -108,33 +124,27 @@ fun NoteEditorScreen(
                 // Timestamp Metadata Line (F3)
                 val dateFormat = remember { SimpleDateFormat("EEEE, d MMM · h:mm a", Locale.getDefault()) }
                 val dateString = remember(state.timestamp) { dateFormat.format(Date(state.timestamp)) }
-                
+                val metadataColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
+                val metadataStyle = MaterialTheme.typography.labelSmall.copy(fontFamily = InterFontFamily, fontWeight = FontWeight.Normal, letterSpacing = 0.5.sp)
+
                 Row(
                     modifier = Modifier.padding(bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = dateString,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontFamily = InterFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        style = metadataStyle,
+                        color = metadataColor
                     )
-                    
+
                     if (state.content.isNotEmpty()) {
                         val wordCount = remember(state.content) { state.content.split(Regex("\\s+")).filter { it.isNotBlank() }.size }
                         val readTime = remember(wordCount) { (wordCount / 200).coerceAtLeast(1) }
-                        
+
                         Text(
                             text = " · $wordCount words · ~$readTime min read",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontFamily = InterFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                letterSpacing = 0.5.sp
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                            style = metadataStyle,
+                            color = metadataColor
                         )
                     }
                 }
@@ -142,6 +152,9 @@ fun NoteEditorScreen(
                 val contentTextStyle = MaterialTheme.typography.bodyLarge
                 // Content Field
                 BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester), // Attached the focus requester here
                     value = state.content,
                     onValueChange = onContentChange,
                     textStyle = contentTextStyle.copy(
@@ -159,19 +172,19 @@ fun NoteEditorScreen(
                             }
                             innerTextField()
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth() // Don't use fillMaxSize in scrollable Column
+                    }
                 )
-                
-                // Safety buffer to ensure text can be scrolled above the floating Pill
-                Spacer(modifier = Modifier.height(160.dp))
+
+                // Overscroll clearance spacer to push text above the AI mood pill
+                Spacer(modifier = Modifier.height(80.dp))
             }
 
             // The Signature Element: AI Mood Pill (F4 - Keyboard Aware)
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp), // Removed imePadding as it's now on the parent Box
+                    .imePadding()
+                    .padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AiMoodPill(
@@ -227,7 +240,7 @@ private fun NoteEditorTopBar(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            
+
             IconButton(
                 onClick = { /* Handle AI specific action or open sheet */ },
                 modifier = Modifier
@@ -324,7 +337,9 @@ private fun AiMoodPill(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true,
+    device = "spec:width=1080px,height=2340px,dpi=440,navigation=buttons"
+)
 @Composable
 fun NoteEditorScreenPreview() {
     InkMoraTheme {
