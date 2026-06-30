@@ -15,55 +15,50 @@ fun ThemePromptSheet(
     onMoodSelect: (AppMood) -> Unit,
     onApply: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 24.dp, vertical = 32.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Text(
+            "Theme Prompt (The Whisper)",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Text(
+            "Choose your vibe:",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            maxItemsInEachRow = 2
         ) {
-            Text(
-                "Theme Prompt (The Whisper)",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                "Choose your vibe:",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                maxItemsInEachRow = 2
-            ) {
-                AppMood.entries.forEach { mood ->
-                    MoodChip(
-                        mood = mood,
-                        isSelected = mood == currentMood,
-                        onClick = { onMoodSelect(mood) }
-                    )
-                }
+            AppMood.entries.forEach { mood ->
+                MoodChip(
+                    mood = mood,
+                    isSelected = mood == currentMood,
+                    onClick = { onMoodSelect(mood) }
+                )
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Button(
-                onClick = onApply,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Confirm Vibe")
-            }
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Button(
+            onClick = onApply,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Confirm Vibe")
         }
     }
 }
