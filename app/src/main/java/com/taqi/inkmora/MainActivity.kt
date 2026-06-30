@@ -117,23 +117,13 @@ class MainActivity : ComponentActivity() {
 
                         NoteEditorScreen(
                             state = state,
+                            currentMood = themeSettings.mood,
+                            onMoodSelect = mainViewModel::updateMood,
                             onTitleChange = viewModel::onTitleChange,
                             onContentChange = viewModel::onContentChange,
                             onSaveNote = viewModel::saveNote,
                             onDeleteNote = viewModel::deleteNote,
                             onBack = {
-                                navController.popBackStack()
-                            },
-                            onOpenThemePrompt = {
-                                navController.navigate(Screen.ThemePrompt)
-                            }
-                        )
-                    }
-                    composable<Screen.ThemePrompt> {
-                        ThemePromptSheet(
-                            currentMood = themeSettings.mood,
-                            onMoodSelect = mainViewModel::updateMood,
-                            onApply = {
                                 navController.popBackStack()
                             }
                         )

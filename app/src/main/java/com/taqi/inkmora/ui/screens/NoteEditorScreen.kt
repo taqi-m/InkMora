@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.R
+import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.ui.theme.AuraPurple
 import com.taqi.inkmora.ui.theme.InkMoraTheme
 import com.taqi.inkmora.ui.theme.InterFontFamily
@@ -37,16 +38,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NoteEditorScreen(
     state: NoteEditorUiState,
+    currentMood: AppMood,
+    onMoodSelect: (AppMood) -> Unit,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onSaveNote: () -> Unit,
     onDeleteNote: () -> Unit,
-    onBack: () -> Unit,
-    onOpenThemePrompt: () -> Unit
+    onBack: () -> Unit
 ) {
     // Simulate AI Active state for the visual glow
     val isAiActive = false
@@ -56,6 +58,9 @@ fun NoteEditorScreen(
     // Focus requester variables to handle tapping empty space
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
+
+    val sheetState = rememberModalBottomSheetState()
+    var showThemeSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -90,7 +95,6 @@ fun NoteEditorScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding() // Ensures scroll bounds adjust when keyboard opens
-                    .imeNestedScroll()
                     .verticalScroll(scrollState) // Re-enabled vertical scrolling
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
@@ -188,8 +192,23 @@ fun NoteEditorScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AiMoodPill(
-                    onClick = onOpenThemePrompt
+                    onClick = { showThemeSheet = true }
                 )
+            }
+
+            if (showThemeSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showThemeSheet = false },
+                    sheetState = sheetState,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    dragHandle = { BottomSheetDefaults.DragHandle() }
+                ) {
+                    ThemePromptSheet(
+                        currentMood = currentMood,
+                        onMoodSelect = onMoodSelect,
+                        onApply = { showThemeSheet = false }
+                    )
+                }
             }
         }
     }
@@ -349,12 +368,13 @@ fun NoteEditorScreenPreview() {
                 content = "The way the digital nib moves across the screen is reminiscent of traditional calligraphy, yet it carries a weightless potential that only the virtual world can offer.",
                 timestamp = System.currentTimeMillis()
             ),
+            currentMood = AppMood.DEFAULT,
+            onMoodSelect = {},
             onTitleChange = {},
             onContentChange = {},
             onSaveNote = {},
             onDeleteNote = {},
-            onBack = {},
-            onOpenThemePrompt = {}
+            onBack = {}
         )
     }
 }
