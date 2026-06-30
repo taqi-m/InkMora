@@ -262,7 +262,7 @@ private fun NoteCard(
     Surface(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -275,7 +275,7 @@ private fun NoteCard(
             ) {
                 Text(
                     text = note.title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
@@ -316,12 +316,12 @@ private fun NoteCard(
                 )
                 
                 // AI Sparkle Indicator (Mock)
-                Icon(
+                /*Icon(
                     painter = painterResource(id = R.drawable.ic_ai_sparkles),
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                     tint = AuraPurple
-                )
+                )*/
             }
         }
     }
