@@ -5,10 +5,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.domain.model.ThemeMode
 import com.taqi.inkmora.domain.model.ThemeSettings
+import com.taqi.inkmora.domain.model.ThemeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -16,13 +17,14 @@ import java.io.IOException
 
 /**
  * Internal DataStore source for theme settings.
- * Refactored to accept DataStore<Preferences> directly for easier unit testing.
  */
 class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
 
     private object PreferencesKeys {
         val THEME_MODE = stringPreferencesKey("theme_mode")
-        val MOOD = stringPreferencesKey("mood")
+        val GLOBAL_SEED_COLOR = intPreferencesKey("global_seed_color")
+        val GLOBAL_THEME_STYLE = stringPreferencesKey("global_theme_style")
+        val GLOBAL_THEME_LABEL = stringPreferencesKey("global_theme_label")
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
     }
 
@@ -42,16 +44,22 @@ class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
                 ThemeMode.FOLLOW_SYSTEM
             }
 
-            val moodString = preferences[PreferencesKeys.MOOD] ?: AppMood.DEFAULT.name
-            val mood = try {
-                AppMood.valueOf(moodString)
-            } catch (e: IllegalArgumentException) {
-                AppMood.DEFAULT
-            }
-
+            val seedColor = preferences[PreferencesKeys.GLOBAL_SEED_COLOR]
+            val themeStyle = preferences[PreferencesKeys.GLOBAL_THEME_STYLE]
+            val themeLabel = preferences[PreferencesKeys.GLOBAL_THEME_LABEL]
             val isOnboardingComplete = preferences[PreferencesKeys.ONBOARDING_COMPLETE] ?: false
 
-            ThemeSettings(themeMode, mood, isOnboardingComplete)
+            val globalThemeToken = if (seedColor != null && themeStyle != null) {
+                ThemeToken(seedColor, themeStyle, themeLabel)
+            } else {
+                ThemeToken.Default
+            }
+
+            ThemeSettings(
+                themeMode = themeMode,
+                globalThemeToken = globalThemeToken,
+                isOnboardingComplete = isOnboardingComplete
+            )
         }
 
     suspend fun updateThemeMode(themeMode: ThemeMode) {
@@ -60,9 +68,15 @@ class ThemeSettingsStore(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun updateMood(mood: AppMood) {
+    suspend fun updateGlobalTheme(themeToken: ThemeToken) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.MOOD] = mood.name
+            preferences[PreferencesKeys.GLOBAL_SEED_COLOR] = themeToken.seedColor
+            preferences[PreferencesKeys.GLOBAL_THEME_STYLE] = themeToken.styleName
+            if (themeToken.label != null) {
+                preferences[PreferencesKeys.GLOBAL_THEME_LABEL] = themeToken.label
+            } else {
+                preferences.remove(PreferencesKeys.GLOBAL_THEME_LABEL)
+            }
         }
     }
 
