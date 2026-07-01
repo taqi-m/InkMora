@@ -16,13 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.taqi.inkmora.domain.model.AppMood
+import com.taqi.inkmora.domain.model.ThemeToken
 import java.util.Locale
 
 @Composable
 fun ThemePromptSheet(
-    currentMood: AppMood,
-    onMoodSelect: (AppMood) -> Unit,
+    currentMood: ThemeToken,
+    onMoodSelect: (ThemeToken) -> Unit,
     onApply: () -> Unit
 ) {
     Column(
@@ -53,7 +53,8 @@ fun ThemePromptSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             maxItemsInEachRow = 2
         ) {
-            AppMood.entries.forEach { mood ->
+            val allVibes = listOf(ThemeToken.Default) + ThemeToken.presets()
+            allVibes.forEach { mood ->
                 MoodChip(
                     mood = mood,
                     isSelected = mood == currentMood,
@@ -75,7 +76,7 @@ fun ThemePromptSheet(
 
 @Composable
 fun MoodChip(
-    mood: AppMood,
+    mood: ThemeToken,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -83,9 +84,7 @@ fun MoodChip(
         selected = isSelected,
         onClick = onClick,
         label = { 
-            Text(mood.name.lowercase(Locale.ROOT).replaceFirstChar { 
-                if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() 
-            }) 
+            Text(mood.label ?: "Custom Vibe") 
         },
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primary,

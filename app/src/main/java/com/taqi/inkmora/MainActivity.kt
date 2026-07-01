@@ -33,9 +33,13 @@ class MainActivity : ComponentActivity() {
             val authViewModel: AuthViewModel = hiltViewModel()
             
             val themeSettings by mainViewModel.themeSettings.collectAsStateWithLifecycle()
+            val activeThemeState by mainViewModel.activeThemeState.collectAsStateWithLifecycle()
             val authUser by authViewModel.user.collectAsStateWithLifecycle()
 
-            InkMoraTheme(themeSettings = themeSettings) {
+            InkMoraTheme(
+                themeToken = activeThemeState.themeToken, 
+                themeMode = activeThemeState.themeMode
+            ) {
                 val navController = rememberNavController()
 
                 NavHost(
@@ -54,8 +58,8 @@ class MainActivity : ComponentActivity() {
                         val authIsSigningIn by authViewModel.isSigningIn.collectAsStateWithLifecycle()
                         
                         OnboardingScreen(
-                            currentMood = themeSettings.mood,
-                            onMoodSelected = mainViewModel::updateMood,
+                            currentMood = themeSettings.globalThemeToken,
+                            onMoodSelected = mainViewModel::updateGlobalTheme,
                             onGoogleSignIn = { context -> authViewModel.signInWithGoogle(context) },
                             isSigningIn = authIsSigningIn,
                             onOnboardingComplete = {
@@ -117,8 +121,8 @@ class MainActivity : ComponentActivity() {
 
                         NoteEditorScreen(
                             state = state,
-                            currentMood = themeSettings.mood,
-                            onMoodSelect = mainViewModel::updateMood,
+                            currentMood = themeSettings.globalThemeToken,
+                            onMoodSelect = mainViewModel::updateGlobalTheme,
                             onTitleChange = viewModel::onTitleChange,
                             onContentChange = viewModel::onContentChange,
                             onSaveNote = viewModel::saveNote,

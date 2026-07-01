@@ -1,8 +1,8 @@
 package com.taqi.inkmora.domain.repository
 
-import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.domain.model.ThemeMode
 import com.taqi.inkmora.domain.model.ThemeSettings
+import com.taqi.inkmora.domain.model.ThemeToken
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -24,7 +24,7 @@ interface SettingsRepository {
     /**
      * Updates the application's mood (dynamic palette).
      */
-    suspend fun updateMood(mood: AppMood)
+    suspend fun updateGlobalTheme(themeToken: ThemeToken)
 
     /**
      * Persists whether the user has completed the onboarding flow.

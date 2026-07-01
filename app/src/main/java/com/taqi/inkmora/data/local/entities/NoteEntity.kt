@@ -10,6 +10,9 @@ data class NoteEntity(
     val content: String,
     val timestamp: Long,
     val color: Int,
+    val themeSeedColor: Int? = null,
+    val themeStyleName: String? = null,
+    val themeLabel: String? = null,
     @PrimaryKey(autoGenerate = true) val id: Int? = null
 ) {
     fun toNote(): Note {
@@ -18,6 +21,9 @@ data class NoteEntity(
             content = content,
             timestamp = timestamp,
             color = color,
+            themeSeedColor = themeSeedColor,
+            themeStyleName = themeStyleName,
+            themeLabel = themeLabel,
             id = id
         )
     }
@@ -29,6 +35,9 @@ fun Note.toNoteEntity(): NoteEntity {
         content = content,
         timestamp = timestamp,
         color = color,
+        themeSeedColor = themeSeedColor,
+        themeStyleName = themeStyleName,
+        themeLabel = themeLabel,
         id = id
     )
 }

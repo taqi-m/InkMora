@@ -33,7 +33,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.taqi.inkmora.domain.model.AppMood
+import com.taqi.inkmora.domain.model.ThemeToken
 import com.taqi.inkmora.ui.components.GoogleSignInButton
 import com.taqi.inkmora.ui.theme.InkMoraTheme
 import com.taqi.inkmora.ui.theme.InterFontFamily
@@ -41,8 +41,8 @@ import com.taqi.inkmora.ui.theme.LoraFontFamily
 
 @Composable
 fun OnboardingScreen(
-    currentMood: AppMood = AppMood.DEFAULT,
-    onMoodSelected: (AppMood) -> Unit = {},
+    currentMood: ThemeToken = ThemeToken.Default,
+    onMoodSelected: (ThemeToken) -> Unit = {},
     onGoogleSignIn: (Context) -> Unit = {},
     isSigningIn: Boolean = false,
     onOnboardingComplete: () -> Unit
@@ -73,8 +73,8 @@ fun OnboardingScreen(
 
 @Composable
 private fun OnboardingPosterContent(
-    currentMood: AppMood,
-    onMoodSelected: (AppMood) -> Unit,
+    currentMood: ThemeToken,
+    onMoodSelected: (ThemeToken) -> Unit,
     onGoogleSignIn: () -> Unit,
     isSigningIn: Boolean,
     animatedTextColor: Color,
@@ -139,9 +139,9 @@ private fun OnboardingPosterContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val moods = listOf(
-                    "Calm" to AppMood.CALM,
-                    "Energetic" to AppMood.ENERGETIC,
-                    "Melancholic" to AppMood.MELANCHOLIC
+                    "Calm" to ThemeToken.Calm,
+                    "Energetic" to ThemeToken.Energetic,
+                    "Melancholic" to ThemeToken.Melancholic
                 )
                 moods.forEach { (name, mood) ->
                     val isSelected = currentMood == mood
@@ -158,7 +158,7 @@ private fun OnboardingPosterContent(
 
                     Surface(
                         onClick = {
-                            onMoodSelected(if (isSelected) AppMood.DEFAULT else mood)
+                            onMoodSelected(if (isSelected) ThemeToken.Default else mood)
                         },
                         shape = MaterialTheme.shapes.small,
                         border = border,

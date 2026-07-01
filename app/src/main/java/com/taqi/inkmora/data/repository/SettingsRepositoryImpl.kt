@@ -1,9 +1,9 @@
 package com.taqi.inkmora.data.repository
 
 import com.taqi.inkmora.data.local.ThemeSettingsStore
-import com.taqi.inkmora.domain.model.AppMood
 import com.taqi.inkmora.domain.model.ThemeMode
 import com.taqi.inkmora.domain.model.ThemeSettings
+import com.taqi.inkmora.domain.model.ThemeToken
 import com.taqi.inkmora.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -26,8 +26,8 @@ class SettingsRepositoryImpl @Inject constructor(
         themeSettingsStore.updateThemeMode(themeMode)
     }
 
-    override suspend fun updateMood(mood: AppMood) {
-        themeSettingsStore.updateMood(mood)
+    override suspend fun updateGlobalTheme(themeToken: ThemeToken) {
+        themeSettingsStore.updateGlobalTheme(themeToken)
     }
 
     override suspend fun setOnboardingComplete(complete: Boolean) {

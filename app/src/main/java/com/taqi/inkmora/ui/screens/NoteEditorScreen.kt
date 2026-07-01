@@ -58,7 +58,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.taqi.inkmora.R
-import com.taqi.inkmora.domain.model.AppMood
+import com.taqi.inkmora.domain.model.ThemeToken
 import com.taqi.inkmora.ui.theme.AuraPurple
 import com.taqi.inkmora.ui.theme.InkMoraTheme
 import com.taqi.inkmora.ui.theme.InterFontFamily
@@ -71,8 +71,8 @@ import java.util.Locale
 @Composable
 fun NoteEditorScreen(
     state: NoteEditorUiState,
-    currentMood: AppMood,
-    onMoodSelect: (AppMood) -> Unit,
+    currentMood: ThemeToken,
+    onMoodSelect: (ThemeToken) -> Unit,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onSaveNote: () -> Unit,
@@ -397,7 +397,7 @@ fun NoteEditorScreenPreview() {
                 content = "The way the digital nib moves across the screen is reminiscent of traditional calligraphy, yet it carries a weightless potential that only the virtual world can offer.",
                 timestamp = System.currentTimeMillis()
             ),
-            currentMood = AppMood.DEFAULT,
+            currentMood = ThemeToken.Default,
             onMoodSelect = {},
             onTitleChange = {},
             onContentChange = {},
