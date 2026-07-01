@@ -53,7 +53,7 @@ fun ThemePromptSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             maxItemsInEachRow = 2
         ) {
-            val allVibes = listOf(ThemeToken.Default) + ThemeToken.presets()
+            val allVibes = (listOf(ThemeToken.Default) + ThemeToken.presets() + currentMood).distinct()
             allVibes.forEach { mood ->
                 MoodChip(
                     mood = mood,
@@ -63,7 +63,29 @@ fun ThemePromptSheet(
             }
         }
         
-        Spacer(modifier = Modifier.height(32.dp))
+        // Debug Information for Current Mood
+        if (currentMood != ThemeToken.Default) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    "Current Token Details (Debug)",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    "Label: ${currentMood.label}\nStyle: ${currentMood.styleName}\nSeed Color: #${Integer.toHexString(currentMood.seedColor).uppercase()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
         
         Button(
             onClick = onApply,

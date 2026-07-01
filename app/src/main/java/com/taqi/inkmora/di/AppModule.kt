@@ -9,6 +9,8 @@ import com.taqi.inkmora.domain.usecase.AddNote
 import com.taqi.inkmora.domain.usecase.DeleteNote
 import com.taqi.inkmora.domain.usecase.GetNote
 import com.taqi.inkmora.domain.usecase.GetNotes
+import com.taqi.inkmora.domain.usecase.AnalyzeNoteMood
+import com.taqi.inkmora.domain.repository.AiRepository
 import com.taqi.inkmora.domain.usecase.NoteUseCases
 import dagger.Module
 import dagger.Provides
@@ -38,12 +40,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteUseCases(repository: NoteRepository): NoteUseCases {
+    fun provideNoteUseCases(
+        repository: NoteRepository,
+        aiRepository: AiRepository
+    ): NoteUseCases {
         return NoteUseCases(
             getNotes = GetNotes(repository),
             deleteNote = DeleteNote(repository),
             addNote = AddNote(repository),
-            getNote = GetNote(repository)
+            getNote = GetNote(repository),
+            analyzeNoteMood = AnalyzeNoteMood(aiRepository)
         )
     }
 }
