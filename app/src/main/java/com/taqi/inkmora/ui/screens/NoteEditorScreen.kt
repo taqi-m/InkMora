@@ -77,6 +77,7 @@ fun NoteEditorScreen(
     onContentChange: (String) -> Unit,
     onSaveNote: () -> Unit,
     onDeleteNote: () -> Unit,
+    onAnalyzeMood: () -> Unit,
     onBack: () -> Unit
 ) {
     // Simulate AI Active state for the visual glow
@@ -97,6 +98,7 @@ fun NoteEditorScreen(
                 onBack = onBack,
                 onSave = onSaveNote,
                 onDelete = onDeleteNote,
+                onAnalyzeMood = onAnalyzeMood,
                 showDelete = state.noteId != null // Only show delete if editing existing note
             )
         },
@@ -105,6 +107,7 @@ fun NoteEditorScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(state.color).copy(alpha = 0.03f)) // Subtle breath of color
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
                 // Make the entire Box clickable to focus the text field
@@ -115,10 +118,7 @@ fun NoteEditorScreen(
                     focusRequester.requestFocus()
                 }
         ) {
-            // Optional: Background Mood Gradient Wash would go here
-            if (isAiActive) {
-                // Background wash implementation placeholder
-            }
+
 
             Column(
                 modifier = Modifier
@@ -221,6 +221,8 @@ fun NoteEditorScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AiMoodPill(
+                    themeToken = state.themeToken,
+                    isAnalyzing = state.isAnalyzingTheme,
                     onClick = { showThemeSheet = true }
                 )
             }
@@ -249,6 +251,7 @@ private fun NoteEditorTopBar(
     onBack: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
+    onAnalyzeMood: () -> Unit,
     showDelete: Boolean
 ) {
     TopAppBar(
@@ -290,7 +293,7 @@ private fun NoteEditorTopBar(
             }
 
             IconButton(
-                onClick = { /* Handle AI specific action or open sheet */ },
+                onClick = onAnalyzeMood,
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
@@ -329,6 +332,8 @@ private fun NoteEditorTopBar(
 
 @Composable
 private fun AiMoodPill(
+    themeToken: ThemeToken,
+    isAnalyzing: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -372,11 +377,18 @@ private fun AiMoodPill(
                     tint = AuraPurple,
                     modifier = Modifier
                         .size(20.dp)
-                        .alpha(pulseGlow) // Apply the pulse animation
+                        .alpha(if (isAnalyzing) pulseGlow else 1f) // Apply the pulse animation only when analyzing
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+                
+                val displayText = when {
+                    isAnalyzing -> "Analyzing mood..."
+                    themeToken.label?.isNotEmpty() == true -> "${themeToken.label} · ${themeToken.styleName}"
+                    else -> "Start writing..."
+                }
+                
                 Text(
-                    text = "Find the mood...",
+                    text = displayText,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -403,6 +415,7 @@ fun NoteEditorScreenPreview() {
             onContentChange = {},
             onSaveNote = {},
             onDeleteNote = {},
+            onAnalyzeMood = {},
             onBack = {}
         )
     }

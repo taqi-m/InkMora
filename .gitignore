@@ -134,6 +134,7 @@ fabric.properties
 
 # Gemini
 .gemini/
+.geminiignore
 
 # Kotlin ephemeral data
 .kotlin/

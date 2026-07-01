@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taqi.inkmora.domain.model.InvalidNoteException
 import com.taqi.inkmora.domain.model.Note
+import com.taqi.inkmora.domain.model.ThemeToken
 import com.taqi.inkmora.domain.usecase.NoteUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 data class NoteEditorUiState(
@@ -21,7 +24,9 @@ data class NoteEditorUiState(
     val noteId: Int? = null,
     val timestamp: Long = System.currentTimeMillis(),
     val isLoading: Boolean = false,
-    val color: Int = 0xFFF5F5F7.toInt() // Default background color
+    val color: Int = 0xFFF5F5F7.toInt(), // Default background color
+    val themeToken: ThemeToken = ThemeToken.Default,
+    val isAnalyzingTheme: Boolean = false
 )
 
 sealed class NoteEditorEvent {
@@ -42,6 +47,7 @@ class NoteEditorViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentNoteId: Int? = null
+    private var themeAnalysisJob: Job? = null
 
     // We can extract arguments directly from the SavedStateHandle if passed via Navigation
     // However, for explicit loading, we can expose a function.
@@ -58,6 +64,11 @@ class NoteEditorViewModel @Inject constructor(
                         noteId = note.id,
                         timestamp = note.timestamp,
                         color = note.color,
+                        themeToken = if (note.themeSeedColor != null && note.themeStyleName != null) {
+                            ThemeToken(note.themeSeedColor, note.themeStyleName, note.themeLabel)
+                        } else {
+                            ThemeToken.Default
+                        },
                         isLoading = false
                     )
                 } ?: run {
@@ -76,6 +87,27 @@ class NoteEditorViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(content = newContent)
     }
 
+    fun analyzeMood() {
+        val currentContent = _uiState.value.content
+        if (currentContent.length < 10) return
+        
+        themeAnalysisJob?.cancel()
+        themeAnalysisJob = viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isAnalyzingTheme = true)
+            val result = noteUseCases.analyzeNoteMood(currentContent)
+            result.onSuccess { token ->
+                _uiState.value = _uiState.value.copy(
+                    themeToken = token,
+                    color = token.seedColor,
+                    isAnalyzingTheme = false
+                )
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(isAnalyzingTheme = false)
+                _eventFlow.emit(NoteEditorEvent.ShowSnackbar("Failed to analyze mood"))
+            }
+        }
+    }
+
     fun saveNote() {
         viewModelScope.launch {
             try {
@@ -85,6 +117,9 @@ class NoteEditorViewModel @Inject constructor(
                         content = _uiState.value.content,
                         timestamp = System.currentTimeMillis(),
                         color = _uiState.value.color,
+                        themeSeedColor = if (_uiState.value.themeToken != ThemeToken.Default) _uiState.value.themeToken.seedColor else null,
+                        themeStyleName = if (_uiState.value.themeToken != ThemeToken.Default) _uiState.value.themeToken.styleName else null,
+                        themeLabel = if (_uiState.value.themeToken != ThemeToken.Default) _uiState.value.themeToken.label else null,
                         id = currentNoteId
                     )
                 )

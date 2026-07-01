@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.toRoute
 import com.taqi.inkmora.domain.model.AuthUser
+import com.taqi.inkmora.domain.model.ThemeToken
 import com.taqi.inkmora.ui.screens.*
 import com.taqi.inkmora.ui.theme.InkMoraTheme
 import com.taqi.inkmora.ui.viewmodels.AuthViewModel
@@ -121,12 +122,13 @@ class MainActivity : ComponentActivity() {
 
                         NoteEditorScreen(
                             state = state,
-                            currentMood = themeSettings.globalThemeToken,
+                            currentMood = if (state.themeToken != ThemeToken.Default) state.themeToken else themeSettings.globalThemeToken,
                             onMoodSelect = mainViewModel::updateGlobalTheme,
                             onTitleChange = viewModel::onTitleChange,
                             onContentChange = viewModel::onContentChange,
                             onSaveNote = viewModel::saveNote,
                             onDeleteNote = viewModel::deleteNote,
+                            onAnalyzeMood = viewModel::analyzeMood,
                             onBack = {
                                 navController.popBackStack()
                             }
